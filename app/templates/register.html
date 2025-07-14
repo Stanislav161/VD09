@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Карточка регистрации -->
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white py-4">
+                    <h1 class="text-center mb-0 display-5 fw-bold">
+                        <i class="bi bi-person-plus me-2"></i>Регистрация
+                    </h1>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form method="post" action="{{ url_for('register')}}" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        <!-- Поле имени пользователя -->
+                        <div class="mb-4">
+                            <label for="username" class="form-label fw-medium">
+                                <i class="bi bi-person-badge me-2"></i>{{ form.username.label.text }}
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-person text-success"></i>
+                                </span>
+                                {{ form.username(class="form-control form-control-lg py-3", placeholder="Придумайте имя пользователя") }}
+                            </div>
+                            {% for error in form.username.errors %}
+                            <div class="invalid-feedback d-block">
+                                <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Поле пароля -->
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-medium">
+                                <i class="bi bi-lock me-2"></i>{{ form.password.label.text }}
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-key text-success"></i>
+                                </span>
+                                {{ form.password(class="form-control form-control-lg py-3", placeholder="Создайте пароль", id="password") }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text mt-2">
+                                <small>Пароль должен содержать минимум 8 символов</small>
+                            </div>
+                            {% for error in form.password.errors %}
+                            <div class="invalid-feedback d-block">
+                                <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Подтверждение пароля -->
+                        <div class="mb-4">
+                            <label for="confirm_password" class="form-label fw-medium">
+                                <i class="bi bi-lock-fill me-2"></i>{{ form.confirm_password.label.text }}
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-key-fill text-success"></i>
+                                </span>
+                                {{ form.confirm_password(class="form-control form-control-lg py-3", placeholder="Повторите пароль", id="confirm_password") }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            {% for error in form.confirm_password.errors %}
+                            <div class="invalid-feedback d-block">
+                                <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Индикатор сложности пароля -->
+                        <div class="mb-4">
+                            <div class="progress mb-2" style="height: 8px;">
+                                <div id="password-strength" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small">
+                                <span id="strength-text">Сложность пароля</span>
+                                <span id="strength-percent">0%</span>
+                            </div>
+                        </div>
+
+                        <!-- Кнопка регистрации -->
+                        <div class="d-grid mb-4">
+                            {{ form.submit(class="btn btn-success btn-lg py-3 fw-bold shadow") }}
+                        </div>
+
+                        <!-- Ссылка на вход -->
+                        <div class="text-center pt-3">
+                            <p class="mb-0">
+                                Уже есть аккаунт?
+                                <a href="{{ url_for('login') }}" class="text-decoration-none fw-medium text-success">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Войти
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Стили для формы -->
+<style>
+    .card {
+        border-radius: 20px;
+        overflow: hidden;
+        border: none;
+    }
+    .form-control, .input-group-text {
+        border-radius: 12px !important;
+    }
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    }
+    .card-header {
+        border-radius: 0 !important;
+    }
+    .btn-success {
+        background: linear-gradient(to right, #198754, #0d6e3f);
+        border: none;
+        transition: all 0.3s;
+    }
+    .btn-success:hover {
+        background: linear-gradient(to right, #157347, #0a5732);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>
+
+<!-- Скрипты -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Функция для переключения видимости пароля
+        function setupPasswordToggle(buttonId, inputId) {
+            const toggleButton = document.querySelector(buttonId);
+            const passwordInput = document.querySelector(inputId);
+
+            if (toggleButton && passwordInput) {
+                toggleButton.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.innerHTML = type === 'password' ?
+                        '<i class="bi bi-eye"></i>' :
+                        '<i class="bi bi-eye-slash"></i>';
+                });
+            }
+        }
+
+        // Настройка для обоих полей пароля
+        setupPasswordToggle('#togglePassword1', '#password');
+        setupPasswordToggle('#togglePassword2', '#confirm_password');
+
+        // Валидация формы
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Индикатор сложности пароля
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('password-strength');
+        const strengthText = document.getElementById('strength-text');
+        const strengthPercent = document.getElementById('strength-percent');
+
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+
+                // Проверка длины
+                if (password.length >= 8) strength += 25;
+
+                // Проверка наличия цифр
+                if (/\d/.test(password)) strength += 25;
+
+                // Проверка наличия букв в нижнем регистре
+                if (/[a-z]/.test(password)) strength += 25;
+
+                // Проверка наличия букв в верхнем регистре
+                if (/[A-Z]/.test(password)) strength += 25;
+
+                // Обновление индикатора
+                strengthBar.style.width = strength + '%';
+                strengthBar.classList.remove('bg-danger', 'bg-warning', 'bg-success');
+                strengthPercent.textContent = strength + '%';
+
+                if (strength < 50) {
+                    strengthBar.classList.add('bg-danger');
+                    strengthText.textContent = 'Слабый пароль';
+                } else if (strength < 75) {
+                    strengthBar.classList.add('bg-warning');
+                    strengthText.textContent = 'Средний пароль';
+                } else {
+                    strengthBar.classList.add('bg-success');
+                    strengthText.textContent = 'Сильный пароль!';
+                }
+            });
+        }
+
+        // Проверка совпадения паролей
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        if (passwordInput && confirmPasswordInput) {
+            confirmPasswordInput.addEventListener('input', function() {
+                if (this.value !== passwordInput.value) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
