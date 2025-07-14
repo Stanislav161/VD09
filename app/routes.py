@@ -13,6 +13,7 @@ def index():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -21,13 +22,14 @@ def register():
         db.session.commit()
         flash('Вы успешно зарегистрировались!', 'success')
         return redirect(url_for('login'))
-    return render_template("register.html", form=form)
 
+    return render_template("register.html", form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -36,9 +38,11 @@ def login():
             return redirect(url_for('index'))
         else:
             flash('Неверно введены данные аккаунта', 'danger')
+
     return render_template("login.html", form=form)
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))

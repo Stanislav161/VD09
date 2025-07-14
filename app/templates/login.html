@@ -1,136 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <!-- Карточка формы -->
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-primary text-white py-4">
-                    <h1 class="text-center mb-0 display-5 fw-bold">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Вход в систему
-                    </h1>
-                </div>
-
-                <div class="card-body p-4 p-md-5">
-                    <form method="post" action="{{ url_for('login')}}" class="needs-validation" novalidate>
-                        {{ form.hidden_tag() }}
-
-                        <!-- Поле имени пользователя -->
-                        <div class="mb-4">
-                            <label for="username" class="form-label fw-medium">
-                                <i class="bi bi-person-fill me-2"></i>{{ form.username.label.text }}
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light">
-                                    <i class="bi bi-person text-primary"></i>
-                                </span>
-                                {{ form.username(class="form-control form-control-lg py-3", placeholder="Введите ваше имя пользователя") }}
-                            </div>
-                            {% for error in form.username.errors %}
-                            <div class="invalid-feedback d-block">
-                                <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
-                            </div>
-                            {% endfor %}
-                        </div>
-
-                        <!-- Поле пароля -->
-                        <div class="mb-4">
-                            <label for="password" class="form-label fw-medium">
-                                <i class="bi bi-lock-fill me-2"></i>{{ form.password.label.text }}
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light">
-                                    <i class="bi bi-key text-primary"></i>
-                                </span>
-                                {{ form.password(class="form-control form-control-lg py-3", placeholder="Введите ваш пароль") }}
-                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                            </div>
-                            {% for error in form.password.errors %}
-                            <div class="invalid-feedback d-block">
-                                <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
-                            </div>
-                            {% endfor %}
-                        </div>
-
-                        <!-- Запомнить меня -->
-                        <div class="form-check mb-4">
-                            {{ form.remember(class="form-check-input") }}
-                            <label class="form-check-label" for="{{ form.remember.id }}">
-                                Запомнить меня
-                            </label>
-                        </div>
-
-                        <!-- Кнопка отправки -->
-                        <div class="d-grid mb-4">
-                            {{ form.submit(class="btn btn-primary btn-lg py-3 fw-bold shadow") }}
-                        </div>
-
-                        <!-- Ссылки -->
-                        <div class="text-center pt-3">
-                            <p class="mb-2">
-                                <a href="{{ url_for('register') }}" class="text-decoration-none">
-                                    <i class="bi bi-person-plus me-1"></i>Создать новый аккаунт
-                                </a>
-                            </p>
-                            <p class="mb-0">
-                                <a href="#" class="text-decoration-none">
-                                    <i class="bi bi-question-circle me-1"></i>Забыли пароль?
-                                </a>
-                            </p>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <h1>Вход</h1>
+    <form method="post" action="{{ url_for('login') }}">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.username.label }}
+            {{ form.username }}
         </div>
-    </div>
-</div>
-
-<!-- Стили для формы -->
-<style>
-    .card {
-        border-radius: 20px;
-        overflow: hidden;
-    }
-    .form-control, .input-group-text {
-        border-radius: 12px !important;
-    }
-    .form-control:focus {
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-    }
-    .card-header {
-        border-radius: 0 !important;
-    }
-</style>
-
-<!-- Скрипт для показа/скрытия пароля -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const togglePassword = document.querySelector('#togglePassword');
-        const password = document.querySelector('#{{ form.password.id }}');
-
-        if (togglePassword && password) {
-            togglePassword.addEventListener('click', function() {
-                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                password.setAttribute('type', type);
-                this.innerHTML = type === 'password' ?
-                    '<i class="bi bi-eye"></i>' :
-                    '<i class="bi bi-eye-slash"></i>';
-            });
-        }
-
-        // Валидация формы
-        const forms = document.querySelectorAll('.needs-validation');
-        Array.from(forms).forEach(form => {
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-    });
-</script>
+        <div>
+            {{ form.password.label }}
+            {{ form.password }}
+        </div>
+        <div>
+            {{ form.submit }}
+        </div>
+    </form>
 {% endblock %}
